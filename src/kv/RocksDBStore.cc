@@ -1436,6 +1436,29 @@ void RocksDBStore::get_statistics(Formatter *f)
       f->close_section();
     }
   }
+
+  if (cct->_conf->rocksdb_collect_all_cf_compaction_stats) {
+    vector<rocksdb::ColumnFamilyHandle*> handles;
+    handles.push_back(default_cf);
+    for (auto cf : cf_handles) {
+      for (auto shard_cf : cf.second.handles) {
+        handles.push_back(shard_cf);
+      }
+    }
+    f->open_object_section("rocksdb_all_cf_statistics");
+    for (auto handle : handles) {
+      std::string stat_str;
+      bool status = db->GetProperty(handle, "rocksdb.stats", &stat_str); 
+      f->dump_string("rocksdb_compaction_statistics", "");
+      vector<string> stats;
+      split_stats(stat_str, '\n', stats);
+      for (auto st :stats) {
+        f->dump_string("", st);
+      }  
+    }
+    f->close_section();
+  }
+
   if (cct->_conf->rocksdb_collect_extended_stats) {
     if (dbstats) {
       f->open_object_section("rocksdb_extended_statistics");

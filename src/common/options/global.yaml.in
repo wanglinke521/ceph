@@ -3482,6 +3482,12 @@ options:
   default: false
   with_legacy: true
 # For rocksdb, this behavior will be an overhead of 5%~10%, collected only rocksdb_perf is enabled.
+- name: rocksdb_collect_all_cf_compaction_stats
+  type: bool
+  level: advanced
+  default: false
+  with_legacy: true
+# For rocksdb, this behavior will be an overhead of 5%~10%, collected only rocksdb_perf is enabled.
 - name: rocksdb_collect_extended_stats
   type: bool
   level: advanced
